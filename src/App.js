@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 import "./App.css";
@@ -10,7 +10,7 @@ import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up
 import { setCurrentUser } from "./redux/user/user.actions";
 
 class App extends Component {
-  //setting CurrentUser with React
+  //setting CurrentUser with React:
   // constructor() {
   //   super();
   //   this.state = {
@@ -52,6 +52,7 @@ class App extends Component {
   componentWillUnmount() {
     this.unsubscribeFromAuth();
   }
+  //in React we need to pass currentUser to header component:
   //currentUser={this.state.currentUser}
   render() {
     return (
@@ -59,18 +60,31 @@ class App extends Component {
         <Header />
         <Switch>
           <Route exact path="/" component={Homepage} />
-          {/* <Route exact path="/topic" component={Topic} /> */}
           <Route exact path="/shop" component={ShopPage} />
-          <Route exact path="/signIn" component={SignInAndSignUpPage} />
+          <Route
+            exact
+            path="/signIn"
+            render={() =>
+              this.props.currentUser ? (
+                <Redirect to="/" />
+              ) : (
+                <SignInAndSignUpPage />
+              )
+            }
+          />
         </Switch>
       </div>
     );
   }
 }
 
+const mapStateToProps = (state) => ({
+  currentUser: state.user.currentUser,
+});
+
 const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (user) => dispatch(setCurrentUser(user)),
 });
 
 //we dont do anything with currentuser, besides setting the value to it, thats why we dont need mapstateProps, and passing it as null
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
