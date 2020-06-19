@@ -1,49 +1,62 @@
 import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
+import { connect } from "react-redux";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 import "./App.css";
 import Homepage from "./pages/homepage/homepage.component";
 import ShopPage from "./pages/shop/shop.component";
 import Header from "./pages/header/header.component";
 import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
+import { setCurrentUser } from "./redux/user/user.actions";
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      currentUser: null,
-    };
-  }
+  //setting CurrentUser with React
+  // constructor() {
+  //   super();
+  //   this.state = {
+  //     // currentUser: null,
+  //   };
+  // }
   unsubscribeFromAuth = null;
   componentDidMount() {
+    const { setCurrentUser } = this.props;
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
 
         //returns object representing data that is currently stored  in our database, it is very similar to offStateChange
         userRef.onSnapshot((snapShot) => {
-          // console.log(snapShot.id);
-          this.setState({
+          //setting CurrentUser with React:
+          //   this.setState({
+          //     id: snapShot.id,
+          //     ...snapShot.data(),
+          //   });
+
+          //setting current User with Redux:
+          setCurrentUser({
             id: snapShot.id,
             ...snapShot.data(),
           });
-          console.log(this.state);
         });
       }
-      this.setState({
-        currentUser: userAuth,
-      });
+      //setting CurrentUser with React:
+      // this.setState({
+      //   currentUser: userAuth,
+      // });
+
+      //setting current User with Redux:
+      setCurrentUser(userAuth);
     });
   }
 
   componentWillUnmount() {
     this.unsubscribeFromAuth();
   }
-
+  //currentUser={this.state.currentUser}
   render() {
     return (
       <div className="App">
-        <Header currentUser={this.state.currentUser} />
+        <Header />
         <Switch>
           <Route exact path="/" component={Homepage} />
           {/* <Route exact path="/topic" component={Topic} /> */}
@@ -55,4 +68,9 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+//we dont do anything with currentuser, besides setting the value to it, thats why we dont need mapstateProps, and passing it as null
+export default connect(null, mapDispatchToProps)(App);
