@@ -55,21 +55,25 @@ class App extends Component {
   //in React we need to pass currentUser to header component:
   //currentUser={this.state.currentUser}
   render() {
+    //component={Homepage}
+    const { currentUser } = this.props;
     return (
       <div className="App">
         <Header />
         <Switch>
-          <Route exact path="/" component={Homepage} />
-          <Route exact path="/shop" component={ShopPage} />
           <Route
             exact
-            path="/signIn"
+            path="/"
             render={() =>
-              this.props.currentUser ? (
-                <Redirect to="/" />
-              ) : (
-                <SignInAndSignUpPage />
-              )
+              currentUser ? <Homepage /> : <Redirect to="/signin" />
+            }
+          />
+          <Route path="/shop" component={ShopPage} />
+          <Route
+            exact
+            path="/signin"
+            render={() =>
+              currentUser ? <Redirect to="/" /> : <SignInAndSignUpPage />
             }
           />
         </Switch>
@@ -78,8 +82,8 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  currentUser: state.user.currentUser,
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser,
 });
 
 const mapDispatchToProps = (dispatch) => ({
