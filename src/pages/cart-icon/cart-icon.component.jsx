@@ -19,7 +19,7 @@ const CartIcon = ({ toggleCartHidden, itemCount }) => {
 
 //using selector for memoization
 const mapStateToProps = (state) => {
-  console.log("I am being called");
+  // console.log("I am being called");
   return {
     itemCount: selectCartItemsCount(state),
   };
