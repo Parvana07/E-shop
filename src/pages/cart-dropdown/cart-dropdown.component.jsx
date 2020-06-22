@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-
+import { selectCartItems } from "../../redux/cart/cart.selectors";
 import CustomButton from "../customButton/custom-button.component";
 import CartItem from "../cart-item/cart-item.component";
 
@@ -19,9 +19,17 @@ const CartDropdown = ({ cartItems }) => {
   );
 };
 
-const mapStateToProps = ({ cart: { cartItems } }) => ({
-  cartItems,
+//using selectore for memoization
+const mapStateToProps = (state) => ({
+  cartItems: selectCartItems(state),
 });
+
+// const mapStateToProps = ({ cart: { cartItems } }) => {
+//   // console.log("I am being called");
+//   return {
+//     cartItems: cartItems,
+//   };
+// };
 
 //other way of getting info
 // const mapStateToProps = (state) => ({
