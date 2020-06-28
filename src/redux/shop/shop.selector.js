@@ -24,12 +24,13 @@ export const selectShopData = createSelector(
 
 //after state normalization
 export const selectCollection = (collectionUrlParam) =>
-  createSelector(
-    [selectShopData],
-    (collection) => collection[collectionUrlParam]
+  createSelector([selectShopData], (collection) =>
+    collection ? collection[collectionUrlParam] : null
   );
 
 export const selectCollectionsForPreview = createSelector(
   [selectShopData],
-  (collection) => Object.keys(collection).map((key) => collection[key])
+  (collection) =>
+    collection ? Object.keys(collection).map((key) => collection[key]) : []
+  // Object.keys(collection).map((key) => collection[key])
 );

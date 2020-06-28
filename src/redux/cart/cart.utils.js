@@ -26,11 +26,11 @@ export const clearItemFromCart = (cartItems, removeItem) => {
 // };
 
 export const removeItem = (cartItems, cartItemToRemove) => {
-  console.log("I am remove", cartItemToRemove);
+  // console.log("I am remove", cartItemToRemove);
   const existingCartItem = cartItems.find(
     (cartItem) => cartItem.id === cartItemToRemove.id
   );
-  console.log("I am existingCartItem", existingCartItem);
+  // console.log("I am existingCartItem", existingCartItem);
   if (existingCartItem.quantity === 1) {
     return cartItems.filter((cartItem) => cartItem.id !== cartItemToRemove.id);
   }

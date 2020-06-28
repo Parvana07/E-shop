@@ -7,7 +7,7 @@ import CollectionItem from "../collection/collection-item/collection-item";
 import { selectCollection } from "../../redux/shop/shop.selector";
 
 const CategoryPage = ({ collection: { items, title } }) => {
-  console.log(items);
+  // console.log("i am item", items);
   return (
     <div className="collection-page">
       <h2 className="title">{title} </h2>

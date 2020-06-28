@@ -37,6 +37,44 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   }
   return userRef;
 };
+
+export const addCollectionAndDocuments = async (collectionKey, objectToAdd) => {
+  const collectionRef = firestore.collection(collectionKey);
+  // console.log("I am collection", collectionRef);
+
+  //in order to save shop data in firebase we need to use batch function, because we can make one query at time and if server breaks we dont want to be able save half
+  //of the data we have. We want to save all or none.
+  const batch = firestore.batch();
+  objectToAdd.forEach((obj) => {
+    //we want to get the document at an empty string(give me a new document reference in the collection and randomly generate an ID for me)
+    //if we do const newDocRef = collectionRef.doc(obj.title); it will create docs with ID same as title(mens, womens,hats etc..)
+    const newDocRef = collectionRef.doc();
+    // console.log(newDocRef);
+    batch.set(newDocRef, obj);
+  });
+  //fire off batch request, but it returns a promise when commit succeds it will come back and resolve a void value meaning a null value and that's useful for us
+  //because if call this function somewhere we can chain off this function and then call dot then and do something
+  return await batch.commit();
+};
+
+export const convertCollectionSnapshotToMap = (collections) => {
+  const transformedCollection = collections.docs.map((doc) => {
+    const { title, items } = doc.data();
+
+    return {
+      routeName: encodeURI(title.toLowerCase()),
+      id: doc.id,
+      title,
+      items,
+    };
+  });
+  // console.log(transformedCollection);
+  return transformedCollection.reduce((acc, collection) => {
+    acc[collection.title.toLowerCase()] = collection;
+    return acc;
+  }, {});
+};
+
 firebase.initializeApp(config);
 
 export const auth = firebase.auth();
