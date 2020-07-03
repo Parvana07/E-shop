@@ -19,6 +19,7 @@ const config = {
 
 export const createUserProfileDocument = async (userAuth, additionalData) => {
   if (!userAuth) return;
+  console.log("iam userAuth", userAuth);
   const userRef = firestore.doc(`users/${userAuth.uid}`);
   const snapshot = await userRef.get();
   if (!snapshot.exists) {
@@ -35,6 +36,7 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
       console.log("error creating user", err.message);
     }
   }
+  console.log("iam userRef", userRef);
   return userRef;
 };
 
@@ -75,34 +77,46 @@ export const convertCollectionSnapshotToMap = (collections) => {
   }, {});
 };
 
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged((userAuth) => {
+      unsubscribe();
+      resolve(userAuth);
+    }, reject);
+  });
+};
+
 firebase.initializeApp(config);
 
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
-var provider = new firebase.auth.GoogleAuthProvider();
-provider.setCustomParameters({ prompt: "select_account" });
+export const googleProvider = new firebase.auth.GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
 //auth.signInWithPopup(provider);
-export const signInWithGoogle = () =>
-  firebase
-    .auth()
-    .signInWithPopup(provider)
-    .then(function (result) {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      var token = result.credential.accessToken;
-      // The signed-in user info.
-      var user = result.user;
-      // ...
-    })
-    .catch(function (error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // The email of the user's account used.
-      var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      // ...
-    });
+export const signInWithGoogle = () => auth.signInWithPopup(googleProvider);
+
+//or
+// export const signInWithGoogle = () =>
+//   firebase
+//     .auth()
+//     .signInWithPopup(provider)
+//     .then(function (result) {
+//       // This gives you a Google Access Token. You can use it to access the Google API.
+//       var token = result.credential.accessToken;
+//       // The signed-in user info.
+//       var user = result.user;
+//       // ...
+//     })
+//     .catch(function (error) {
+//       // Handle Errors here.
+//       var errorCode = error.code;
+//       var errorMessage = error.message;
+//       // The email of the user's account used.
+//       var email = error.email;
+//       // The firebase.auth.AuthCredential type that was used.
+//       var credential = error.credential;
+//       // ...
+//     });
 
 export default firebase;
