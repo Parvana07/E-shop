@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import { Route } from "react-router-dom";
 import { connect } from "react-redux";
 // import { createStructuredSelector } from "reselect";
@@ -20,12 +20,12 @@ import { fetchCollectionStart } from "../../redux/shop/shop.actions";
 // const CollectionOverviewWithSpinner = WithSpinner(CollectionOverview);
 // const CategoryPageWithSpinner = WithSpinner(CategoryPage);
 
-class ShopPage extends Component {
+const ShopPage = ({ match, fetchCollectionStart }) => {
   // state = {
   //   isLoading: true,
   // };
 
-  unsubscribeFromSnapshot = null;
+  // unsubscribeFromSnapshot = null;
   // without promise
   // componentDidMount() {
   //   const { updateCollections } = this.props;
@@ -41,51 +41,48 @@ class ShopPage extends Component {
   // }
 
   //with promise
-  componentDidMount() {
-    const { fetchCollectionStart } = this.props;
+  useEffect(() => {
     fetchCollectionStart();
-    // console.log(fetchCollectionStartAsync);
-    // fetch(
-    //   "https://firestore.googleapis.com/v1/projects/e-shop-db-59460/databases/(default)/documents/collection"
-    // )
-    //   .then((res) => res.json())
-    //   .then((collections) => console.log(collections));
-  }
+  }, [fetchCollectionStart]);
 
-  render() {
-    // const { match } = this.props;
-    const { match, isLoading, isCollectionLoaded } = this.props;
+  // console.log(fetchCollectionStartAsync);
+  // fetch(
+  //   "https://firestore.googleapis.com/v1/projects/e-shop-db-59460/databases/(default)/documents/collection"
+  // )
+  //   .then((res) => res.json())
+  //   .then((collections) => console.log(collections));
 
-    return (
-      <div className="shop-page">
-        {/* <Route exact path={`${match.path}`} component={CollectionOverview} />
+  // const { match } = this.props;
+
+  return (
+    <div className="shop-page">
+      {/* <Route exact path={`${match.path}`} component={CollectionOverview} />
         <Route path={`${match.path}/:collectionId`} component={CategoryPage} /> */}
-        <Route
-          exact
-          path={`${match.path}`}
-          // render={(otherProps) => (
-          //   <CollectionOverviewWithSpinner
-          //     isLoading={isLoading}
-          //     {...otherProps}
-          //   />
-          // )}
-          component={CollectionOverviewContainer}
-        />
-        <Route
-          exact
-          path={`${match.path}/:collectionId`}
-          // render={(otherProps) => (
-          //   <CategoryPageWithSpinner
-          //     isLoading={!isCollectionLoaded}
-          //     {...otherProps}
-          //   />
-          // )}
-          component={CategoryPageContainer}
-        />
-      </div>
-    );
-  }
-}
+      <Route
+        exact
+        path={`${match.path}`}
+        // render={(otherProps) => (
+        //   <CollectionOverviewWithSpinner
+        //     isLoading={isLoading}
+        //     {...otherProps}
+        //   />
+        // )}
+        component={CollectionOverviewContainer}
+      />
+      <Route
+        exact
+        path={`${match.path}/:collectionId`}
+        // render={(otherProps) => (
+        //   <CategoryPageWithSpinner
+        //     isLoading={!isCollectionLoaded}
+        //     {...otherProps}
+        //   />
+        // )}
+        component={CategoryPageContainer}
+      />
+    </div>
+  );
+};
 
 // const mapStateToProps = ({ shop: { isFetching } }) => ({
 //   isLoading: isFetching,
